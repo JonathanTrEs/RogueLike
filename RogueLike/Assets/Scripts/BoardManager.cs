@@ -39,18 +39,26 @@ public class BoardManager : MonoBehaviour
 
     private void LayoutObjectAtRandom(GameObject[] tileArray, int min, int max) {
         int objectCount = Random.Range(min, max + 1);
-        for(int i = 0; i < objectCount; i++) {
+
+        for (int i = 0; i < objectCount; i++) {
             Vector2 randomPosition = RandomPosition();
             GameObject tileChoice = GetRandomInArray(tileArray);
-            Instantiate(tileChoice, randomPosition, Quaternion.identity);
+            GameObject instance = Instantiate(tileChoice, randomPosition, Quaternion.identity);
+            instance.transform.SetParent(boardHolder);
         }
     }
 
-    public void SetupScene() {
+    public void SetupScene(int level) {
         BoardSetup();
         InitializeList();
+        boardHolder = new GameObject("Tiles").transform;
         LayoutObjectAtRandom(wallTiles, 5, 9);
         LayoutObjectAtRandom(foodTiles, 1, 5);
+        int enemyCount = (int)Mathf.Log(level,2);
+        LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
+        boardHolder = new GameObject("Exit").transform;
+        GameObject instance = Instantiate(exit, new Vector2(colums - 1, rows - 1), Quaternion.identity);
+        instance.transform.SetParent(boardHolder);
     }
 
     private void BoardSetup() {
